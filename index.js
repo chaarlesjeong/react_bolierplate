@@ -17,7 +17,8 @@ app.use(bodyParser.json());
 
 const mongoose = require("mongoose");
 const { mongoURI } = require("./config/dev");
-mongoose.connect(config.mongoURI, {
+mongoose
+  .connect(config.mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
