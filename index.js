@@ -49,7 +49,7 @@ app.post("/api/users/login", (req, res) => {
         loginSuccess: false,
         message: "email이 존재하지 않습니다.",
       });
-    }
+    } 
 
     //이메일 있으면 비번 같은지 확인
     user.comparePassword(req.body.password, (error, isMatch) => {
