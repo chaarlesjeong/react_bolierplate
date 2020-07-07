@@ -2,6 +2,7 @@
 const express = require("express");
 //express app 생성, 포트 고정
 const app = express();
+const router = express.Router();
 const port = 5000;
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -27,9 +28,6 @@ mongoose
   .then(() => console.log("mongoDB Connected"))
   .catch((error) => console.log(error));
 
-//root directory에 오면 해당 내용 출력
-app.get("/", (req, res) => res.send("Hello World!"));
-
 app.post("/api/users/register", (req, res) => {
   //회원 가입 시 필요한 정보들을 client에서 가져온 뒤 DB에 넣어줌.
 
@@ -43,7 +41,7 @@ app.post("/api/users/register", (req, res) => {
   });
 });
 
-app.post("api/users/login", (req, res) => {
+app.post("/api/users/login", (req, res) => {
   //로그인 순서 - 요청된 이메일 DB에서 있는지 검색
   User.findOne({ email: req.body.email }, (error, user) => {
     if (!user) {
@@ -68,6 +66,7 @@ app.post("api/users/login", (req, res) => {
         //Token 저장. Cookie or LocalStorage 등 선택 가능
         //Cookie 저장
         res
+          .cookie("x_auth", user.token)
           .status(200)
           .json({ loginSuccess: true, userId: user._id });
       });
@@ -77,7 +76,7 @@ app.post("api/users/login", (req, res) => {
 
 //Authentication - 사용자 인증(로그인 필요한 페이지에서, 로그인 되었는지 확인하기 위함)
 //Callback Function이 잘 진행되는지 확인해주는 auth middleware
-app.get("api/users/auth", auth, (req, res) => {
+app.get("/api/users/auth", auth, (req, res) => {
   //여기까지 middleware 통과해 왔다는 건, Authentication이 True라는 뜻.
   res.status(200).json({
     _id: req.user._id,
@@ -90,6 +89,16 @@ app.get("api/users/auth", auth, (req, res) => {
     image: req.user.image,
   });
 });
+
+app.get("/api/users/logout", auth, (req, res) => {
+  User.findOneAndUpdate({ _id: req.user._id }, { token: "" }, (error, user) => {
+    if (error) return res.json({ success: false, error });
+    return res.status(200).send({
+      success: true,
+    });
+  });
+});
+
 
 app.listen(port, () =>
   console.log(`Your app listening at http://localhost:${port}`)

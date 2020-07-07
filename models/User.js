@@ -28,6 +28,7 @@ const userSchema = mongoose.Schema({
     default: 0,
   },
   image: String,
+
   token: {
     type: String,
   },
@@ -75,19 +76,14 @@ userSchema.methods.generateToken = function (callback) {
 };
 
 userSchema.statics.findByToken = function (token, callback) {
-  let user = this;
-
   //Token Decoding
+  let user = this;
   jwt.verify(token, "secretToken", function (error, decoded) {
     //유저 아이디 이용해 유저 찾은 후,
     //클라이언트에서 가져온 token과 DB에 보관된 토큰이 일지하는지 확인.
-
     user.findOne({ _id: decoded, token: token }, function (error, user) {
-      if (error) {
-        return callback(error);
-      } else {
-        callback(null, user);
-      }
+      if (error) return callback(error);
+      callback(null, user);
     });
   });
 };

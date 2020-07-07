@@ -1,5 +1,3 @@
-const { request } = require("express");
-const User = require("../models/User");
 const { User } = require("../models/User");
 
 let auth = (req, res, next) => {
@@ -8,16 +6,12 @@ let auth = (req, res, next) => {
   let token = req.cookies.x_auth;
   //2. Token 복호화 한 후 유저 찾아보기
   User.findByToken(token, (error, user) => {
-    if (error) {
-      throw error;
-    }
-    if (!user) {
-      return res.json({ isAuth: false, error: true });
+    if (error) throw error;
+    if (!user) return res.json({ isAuth: false, error: true });
 
-      req.token = token;
-      req.user = user;
-      next();
-    }
+    req.token = token;
+    req.user = user;
+    next();
   });
   //유저 있으면 인증 OK, 없으면 인증 NO
 };
