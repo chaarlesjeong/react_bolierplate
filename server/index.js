@@ -3,7 +3,6 @@ const express = require("express");
 //express app 생성, 포트 고정
 const app = express();
 const router = express.Router();
-const port = 5000;
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const config = require("./config/key");
@@ -99,7 +98,7 @@ app.get("/api/users/logout", auth, (req, res) => {
   });
 });
 
-
+const port = 5000;
 app.listen(port, () =>
   console.log(`Your app listening at http://localhost:${port}`)
 );
