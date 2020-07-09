@@ -27,9 +27,10 @@ mongoose
   .then(() => console.log("mongoDB Connected"))
   .catch((error) => console.log(error));
 
+app.get("/api/hello", (req, res) => res.send("Hello World!"));
+
 app.post("/api/users/register", (req, res) => {
   //회원 가입 시 필요한 정보들을 client에서 가져온 뒤 DB에 넣어줌.
-
   //req.body:body-parser통해 json형식으로 정보 저장.
   const user = new User(req.body);
   user.save((error, userInfo) => {
